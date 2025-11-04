@@ -61,6 +61,3 @@ Reflexão final sobre o potencial transformador da IA e a responsabilidade colet
 
 Este projeto foi inspirado no repositório de [Felipe Aguiar](https://github.com/felipeAguiarCode), que demonstra como utilizar IA para criar conteúdo de podcast de forma automatizada e profissional.
 
----
-
-**Criado com IA** | Novembro de 2025
