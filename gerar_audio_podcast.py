@@ -1,0 +1,86 @@
+#!/usr/bin/env python3
+"""
+Script para gerar áudio do podcast sobre Inteligência Artificial
+Utiliza a API da OpenAI para Text-to-Speech
+"""
+
+import os
+from openai import OpenAI
+
+# Inicializar cliente OpenAI
+client = OpenAI()
+
+# Texto do podcast (dividido em blocos para melhor controle)
+blocos = [
+    {
+        "nome": "bloco1_introducao",
+        "texto": """Olá e bem-vindos ao nosso podcast, onde exploramos as tecnologias que estão moldando o futuro. No episódio de hoje, vamos mergulhar em um dos campos mais fascinantes e disruptivos da atualidade: a Inteligência Artificial. A IA já deixou de ser ficção científica e se tornou uma força presente em nosso dia a dia, desde os algoritmos que recomendam suas músicas e filmes até os sistemas complexos que auxiliam em diagnósticos médicos e carros autônomos. Mas o que é exatamente a Inteligência Artificial? Como ela surgiu e para onde está nos levando? Junte-se a nós nesta jornada para desvendar os mistérios e as promessas da IA."""
+    },
+    {
+        "nome": "bloco2_historia",
+        "texto": """Para entendermos o presente e o futuro da IA, precisamos voltar no tempo. A ideia de criar máquinas pensantes não é nova. Na verdade, ela remonta à antiguidade, com mitos e lendas sobre seres artificiais. Mas foi no século 20 que a IA começou a tomar forma como um campo de estudo sério. Em 1950, o brilhante matemático Alan Turing propôs o famoso "Teste de Turing", um método para determinar se uma máquina pode exibir um comportamento inteligente equivalente ao de um ser humano. Seis anos depois, em 1956, o termo "Inteligência Artificial" foi cunhado em uma conferência em Dartmouth, marcando o nascimento oficial deste campo revolucionário.
+
+Desde então, a IA passou por várias fases, com períodos de grande otimismo e outros de desilusão, conhecidos como "invernos da IA". Mas com o aumento exponencial do poder computacional e a disponibilidade de enormes quantidades de dados, a IA ressurgiu com força total nas últimas décadas. O desenvolvimento de redes neurais, aprendizado de máquina e, mais recentemente, a IA generativa, como o famoso GPT-3, transformaram completamente o cenário. Hoje, a IA não apenas executa tarefas programadas, mas também aprende, se adapta e até cria de forma autônoma."""
+    },
+    {
+        "nome": "bloco3_tendencias",
+        "texto": """E o que o futuro nos reserva? As tendências da IA para os próximos anos são simplesmente impressionantes. Estamos vendo a democratização da IA, com ferramentas cada vez mais acessíveis para empresas de todos os portes. A IA generativa está revolucionando áreas como marketing, design e entretenimento, criando conteúdo de forma autônoma. Na saúde, a IA está auxiliando em diagnósticos mais precisos e no desenvolvimento de novos medicamentos. A automação inteligente está otimizando processos em indústrias, desde a logística até o atendimento ao cliente.
+
+Outras tendências importantes incluem a busca por uma IA mais ética e transparente, a personalização da experiência do cliente em um nível sem precedentes e o uso da IA para resolver grandes desafios globais, como as mudanças climáticas e a sustentabilidade. Estamos caminhando para um futuro onde a IA estará ainda mais integrada em nossas vidas, de maneiras que mal podemos imaginar."""
+    },
+    {
+        "nome": "bloco4_desafios",
+        "texto": """Mas nem tudo são flores. O avanço da Inteligência Artificial também traz consigo uma série de desafios éticos e sociais. Questões como o viés algorítmico, a privacidade dos dados, a responsabilidade por decisões tomadas por máquinas e o impacto no mercado de trabalho são debates urgentes e necessários. Como garantir que a IA seja usada para o bem da humanidade, sem aprofundar as desigualdades existentes? Como regular essa tecnologia tão poderosa de forma eficaz?
+
+Essas são perguntas complexas e que exigem a colaboração de especialistas, governos e da sociedade como um todo. O futuro da IA dependerá não apenas do avanço tecnológico, mas também da nossa capacidade de construir um ecossistema de IA que seja justo, transparente e que respeite os valores humanos."""
+    },
+    {
+        "nome": "bloco5_conclusao",
+        "texto": """Chegamos ao fim de mais um episódio. Hoje, viajamos pela história da Inteligência Artificial, exploramos as tendências que estão moldando o nosso futuro e refletimos sobre os desafios éticos que essa tecnologia nos impõe. A IA é, sem dúvida, uma das forças mais transformadoras do nosso tempo, com o potencial de resolver alguns dos maiores problemas da humanidade. Cabe a nós, como sociedade, garantir que esse potencial seja realizado da melhor forma possível.
+
+Obrigado por nos acompanhar. Fique ligado para mais discussões sobre o futuro da tecnologia em nosso próximo episódio. Até lá!"""
+    }
+]
+
+# Diretório de saída
+output_dir = "/home/ubuntu/podcast_ia/audio_blocos"
+os.makedirs(output_dir, exist_ok=True)
+
+print("Iniciando geração de áudio do podcast...")
+print(f"Total de blocos: {len(blocos)}")
+print("-" * 50)
+
+# Gerar áudio para cada bloco
+arquivos_gerados = []
+for i, bloco in enumerate(blocos, 1):
+    print(f"\nProcessando {bloco['nome']} ({i}/{len(blocos)})...")
+    
+    try:
+        # Gerar áudio usando a API da OpenAI TTS
+        response = client.audio.speech.create(
+            model="tts-1",
+            voice="onyx",  # Voz masculina, profissional
+            input=bloco['texto'],
+            speed=1.0
+        )
+        
+        # Salvar o arquivo de áudio
+        arquivo_saida = os.path.join(output_dir, f"{bloco['nome']}.mp3")
+        response.stream_to_file(arquivo_saida)
+        
+        arquivos_gerados.append(arquivo_saida)
+        print(f"✓ Áudio gerado com sucesso: {arquivo_saida}")
+        
+    except Exception as e:
+        print(f"✗ Erro ao gerar áudio para {bloco['nome']}: {str(e)}")
+
+print("\n" + "=" * 50)
+print(f"Processo concluído! {len(arquivos_gerados)} arquivos gerados.")
+print("=" * 50)
+
+# Listar arquivos gerados
+print("\nArquivos de áudio gerados:")
+for arquivo in arquivos_gerados:
+    print(f"  - {arquivo}")
+
+print("\nPróximo passo: Combinar os arquivos de áudio em um único arquivo.")
